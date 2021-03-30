@@ -1,0 +1,29 @@
+# production stage for the api
+FROM php:7.4-fpm as production-api
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq zip unzip build-essential vim libzip-dev libonig-dev libxml2-dev
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-install mbstring zip exif pcntl pdo_mysql intl
+
+# get a copy of composer
+FROM production-api as temp-composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY albums-api/composer.json /app/composer.json
+COPY albums-api/composer.lock /app/composer.lock
+ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-autoloader --no-scripts -d /app/
+COPY albums-api/ /app
+RUN composer dump-autoload --optimize -d /app/
+RUN cat /app/vendor/autoload.php
+
+FROM production-api
+
+# copy the application
+COPY --chown=www-data:www-data albums-api/ /var/www/albums-api
+COPY --chown=www-data:www-data --from=temp-composer /app/vendor /var/www/albums-api/vendor
+RUN cp /var/www/albums-api/.env.example /var/www/albums-api/.env
+
+RUN php /var/www/albums-api/artisan key:generate
+
+EXPOSE 9000
