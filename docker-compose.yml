@@ -1,0 +1,50 @@
+version: "3.9"
+networks:
+  albums:
+    driver: bridge
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - albums
+
+  albums-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile-ui
+    environment:
+      - VIRTUAL_HOST=ui.albums.test
+      - VIRTUAL_PROTO=http
+      - VIRTUAL_PORT=80
+    networks:
+      - albums
+
+  albums-api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    networks:
+      - albums
+    volumes:
+      - /var/www/albums-api
+
+  albums-api-nginx:
+    tty: true
+    build:
+      context: ./config/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./config/nginx/conf.d/:/etc/nginx/conf.d/:delegated
+    environment:
+      - VIRTUAL_HOST=api.albums.test
+      - VIRTUAL_PROTO=http
+      - VIRTUAL_PORT=80
+    networks:
+      - albums
+    expose:
+      - "80"

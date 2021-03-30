@@ -1,0 +1,14 @@
+# build stage for the ui
+FROM node:lts-alpine as build-ui
+WORKDIR /app
+COPY ./albums-ui/package.json ./
+COPY ./albums-ui/yarn.lock ./
+RUN yarn install
+COPY ./albums-ui .
+RUN yarn build
+
+# production stage for the ui
+FROM nginx:stable-alpine as production-ui
+COPY --from=build-ui /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
