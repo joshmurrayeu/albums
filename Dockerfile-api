@@ -22,8 +22,8 @@ FROM production-api
 # copy the application
 COPY --chown=www-data:www-data albums-api/ /var/www/albums-api
 COPY --chown=www-data:www-data --from=temp-composer /app/vendor /var/www/albums-api/vendor
-COPY --chown=www-data:www-data config/php/.env /var/www/albums-api/.env-test
+RUN cp /var/www/albums-api/.env.example /var/www/albums-api/.env
 
-#RUN php /var/www/albums-api/artisan key:generate
+RUN php /var/www/albums-api/artisan key:generate
 
 EXPOSE 9000

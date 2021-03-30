@@ -21,8 +21,8 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: albums
-      MYSQL_ROOT_PASSWORD: password
+      - MYSQL_DATABASE=albums
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
     networks:
       - albums
 
