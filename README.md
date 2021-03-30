@@ -46,3 +46,13 @@ If you're using Windows, you may need to put these values in your `hosts` file:
 Finally, open a web browser and navigate to http://ui.albums.test/. Hopefully you should see:
 
 ![screenshot-of-homepage.png](screenshot-of-homepage.png)
+
+## Structure
+
+The structure of the application is a little different from other forms of POCs like this.
+
+I have decided to have the API code in one repository (`albums-api`) and the UI in another (`albums-ui`). This repository (`albums`) brings them both together through [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+
+## Questions?
+
+Let me know :) 
