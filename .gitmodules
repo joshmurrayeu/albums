@@ -1,0 +1,6 @@
+[submodule "albums-ui"]
+	path = albums-ui
+	url = https://github.com/joshmurrayeu/albums-ui
+[submodule "albums-api"]
+	path = albums-api
+	url = https://github.com/joshmurrayeu/albums-api
